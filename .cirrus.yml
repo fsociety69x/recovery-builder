@@ -1,0 +1,35 @@
+env:
+  TZ: Asia/KolKata
+
+task:
+  name: "Ubuntu SSH"
+  timeout_in: 240m  
+  container:
+      image: ubuntu:latest
+      cpu: 8
+      memory: 32G
+  
+  Build-Env-Setup_script:
+       - export DEBIAN_FRONTEND=noninteractive
+       - apt update
+       - apt install sudo
+       - df -h
+       - DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
+       - ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
+       - apt-get install -y tzdata
+       - dpkg-reconfigure --frontend noninteractive tzdata
+       - sudo apt update -y && sudo apt install git aria2 curl wget rsync zip unzip lzma cpio ccache neofetch -y
+       - sudo apt install python2 -y
+       - sudo ln -sf /usr/bin/python2 /usr/bin/python
+       - git config --global user.name "Sushrut1101"
+       - git config --global user.email "guptasushrut@gmail.com"
+       - ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N ""
+  
+  Tmate_script:
+       - sudo apt-get install tmate -y
+       - tmate -S /tmp/tmate.sock new-session -d               # Launch tmate in a headless mode
+       - tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'    # Prints the SSH connection string
+       - sleep 100
+  Spam_script:
+       - curl https://raw.githubusercontent.com/Sushrut1101/Ubuntu-Tmate/master/spam.sh > ~/spam.sh
+       - bash ~/spam.sh
